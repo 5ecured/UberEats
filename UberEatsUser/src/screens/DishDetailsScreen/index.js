@@ -33,7 +33,7 @@ const DishDetailsScreen = () => {
             </View>
 
             <View style={styles.button}>
-                <Text style={styles.buttonText}>Add {quantity} item{quantity === 1 ? '' : 's'} to basket (${getTotal()})</Text>
+                <Text style={styles.buttonText}>Add {quantity} item{quantity === 1 ? '' : 's'} to basket &#8226; (${getTotal()})</Text>
             </View>
         </View>
     )

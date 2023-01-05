@@ -1,12 +1,15 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Pressable } from 'react-native'
 import React, { useState } from 'react'
 import restaurants from '../../../assets/data/restaurants.json'
 import { Entypo } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
 
 const dish = restaurants[0].dishes[0]
 
 const DishDetailsScreen = () => {
     const [quantity, setQuantity] = useState(1)
+
+    const navigation = useNavigation()
 
     const onMinus = () => {
         setQuantity(Math.max(quantity - 1, 1))
@@ -32,9 +35,9 @@ const DishDetailsScreen = () => {
                 <Entypo name="plus" size={50} color="black" onPress={onPlus} />
             </View>
 
-            <View style={styles.button}>
+            <Pressable style={styles.button} onPress={() => navigation.navigate('Basket')}>
                 <Text style={styles.buttonText}>Add {quantity} item{quantity === 1 ? '' : 's'} to basket &#8226; (${getTotal()})</Text>
-            </View>
+            </Pressable>
         </View>
     )
 }

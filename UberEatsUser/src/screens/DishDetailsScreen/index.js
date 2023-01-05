@@ -1,11 +1,25 @@
 import { View, Text, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import restaurants from '../../../assets/data/restaurants.json'
 import { Entypo } from '@expo/vector-icons'
 
 const dish = restaurants[0].dishes[0]
 
 const DishDetailsScreen = () => {
+    const [quantity, setQuantity] = useState(1)
+
+    const onMinus = () => {
+        setQuantity(Math.max(quantity - 1, 1))
+    }
+
+    const onPlus = () => {
+        setQuantity(quantity + 1)
+    }
+
+    const getTotal = () => {
+        return (dish.price * quantity).toFixed(2)
+    }
+
     return (
         <View style={styles.page}>
             <Text style={styles.name}>{dish.name}</Text>
@@ -13,9 +27,13 @@ const DishDetailsScreen = () => {
             <View style={styles.separator} />
 
             <View style={styles.row}>
-                <Entypo name="minus" size={50} color="black" />
-                <Text style={styles.quantity}>1</Text>
-                <Entypo name="plus" size={50} color="black" />
+                <Entypo name="minus" size={50} color="black" onPress={onMinus} />
+                <Text style={styles.quantity}>{quantity}</Text>
+                <Entypo name="plus" size={50} color="black" onPress={onPlus} />
+            </View>
+
+            <View style={styles.button}>
+                <Text style={styles.buttonText}>Add {quantity} item{quantity === 1 ? '' : 's'} to basket (${getTotal()})</Text>
             </View>
         </View>
     )
@@ -50,6 +68,17 @@ const styles = StyleSheet.create({
     quantity: {
         fontSize: 25,
         marginHorizontal: 30
+    },
+    button: {
+        backgroundColor: 'black',
+        marginTop: 'auto',
+        padding: 25,
+        alignItems: 'center'
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 18
     }
 })
 

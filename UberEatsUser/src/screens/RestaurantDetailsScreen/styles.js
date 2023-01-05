@@ -31,8 +31,8 @@ export default StyleSheet.create({
         letterSpacing: 0.5
     },
     border: {
-        borderColor: 'lightgrey',
-        borderWidth: 1,
+        height: 1,
+        backgroundColor: 'lightgrey',
         marginTop: 15
     }
 })

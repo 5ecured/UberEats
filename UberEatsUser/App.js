@@ -1,13 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image } from 'react-native';
-import RestaurantItem from './src/components/RestaurantItem';
+import { StyleSheet, View } from 'react-native';
+import HomeScreen from './src/screens/HomeScreen';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <RestaurantItem />
-      <RestaurantItem />
-
+      <HomeScreen />
       <StatusBar style="auto" />
     </View>
   );
@@ -19,6 +17,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10
+    padding: 10,
+    paddingVertical: 30
   },
 });

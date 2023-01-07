@@ -1,18 +1,38 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { DataStore } from "aws-amplify";
 import { BasketDish, Basket } from "../models";
+import { useAuthContext } from "./AuthContext";
 
 const BasketContext = createContext({
 
 })
 
 const BasketContextProvider = ({ children }) => {
-    const addDishToBasket = (dish, quantity) => {
-        console.log('add dish', dish, quantity)
+    const { dbUser } = useAuthContext()
+    const [basket, setBasket] = useState(null)
+    const [restaurant, setRestaurant] = useState(null)
+
+    useEffect(() => {
+        DataStore.query(Basket, b => b.restaurantID.eq(restaurant.id).userID.eq(dbUser.id)).then(baskets => setBasket(baskets[0]))
+    }, [dbUser, restaurant])
+
+    const addDishToBasket = async (dish, quantity) => {
+        let theBasket = basket || await createNewBasket()
+
+
+    }
+
+    const createNewBasket = async () => {
+        const newBasket = await DataStore.save(new Basket({
+            userID: dbUser.id,
+            restaurantID: restaurant.id
+        }))
+        setBasket(newBasket)
+        return newBasket
     }
 
     return (
-        <BasketContext.Provider value={{ addDishToBasket }}>
+        <BasketContext.Provider value={{ addDishToBasket, setRestaurant }}>
             {children}
         </BasketContext.Provider>
     )

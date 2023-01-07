@@ -14,7 +14,6 @@ const Stack = createNativeStackNavigator()
 
 const RootNavigator = () => {
     const { dbUser } = useAuthContext()
-
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             {dbUser ? (

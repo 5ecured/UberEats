@@ -4,11 +4,14 @@ import { Entypo } from '@expo/vector-icons'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { DataStore } from 'aws-amplify'
 import { Dish } from '../../models'
+import { useBasketContext } from '../../context/BasketContext'
 
 
 const DishDetailsScreen = () => {
     const [dish, setDish] = useState(null)
     const [quantity, setQuantity] = useState(1)
+
+    const { addDishToBasket } = useBasketContext()
 
     const navigation = useNavigation()
     const route = useRoute()
@@ -20,6 +23,10 @@ const DishDetailsScreen = () => {
         }
     }, [id])
 
+    const onAddToBasket = async () => {
+        await addDishToBasket(dish, quantity)
+        navigation.goBack()
+    }
 
     const onMinus = () => {
         setQuantity(Math.max(quantity - 1, 1))
@@ -49,7 +56,7 @@ const DishDetailsScreen = () => {
                 <Entypo name="plus" size={50} color="black" onPress={onPlus} />
             </View>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate('Basket')}>
+            <Pressable style={styles.button} onPress={onAddToBasket}>
                 <Text style={styles.buttonText}>Add {quantity} item{quantity === 1 ? '' : 's'} to basket &#8226; (${getTotal()})</Text>
             </Pressable>
         </View>

@@ -4,21 +4,53 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Auth, DataStore } from "aws-amplify";
 import { User } from "../../models";
 import { useAuthContext } from "../../context/AuthContext";
+import { useNavigation } from "@react-navigation/native";
 
 const Profile = () => {
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [lat, setLat] = useState("0");
-  const [lng, setLng] = useState("0");
+  const { sub, setDbUser, dbUser } = useAuthContext()
 
-  const { sub, setDbUser } = useAuthContext()
+  const [name, setName] = useState(dbUser?.name || '');
+  const [address, setAddress] = useState(dbUser?.address || '');
+  const [lat, setLat] = useState(dbUser?.lat + '' || '0');
+  const [lng, setLng] = useState(dbUser?.lng + '' || '0');
+
+  const navigation = useNavigation()
 
   const onSave = async () => {
+    if (dbUser) {
+      await updateUser()
+    } else {
+      await createUser()
+    }
+    navigation.goBack()
+  }
+
+  const createUser = async () => {
     try {
       const user = await DataStore.save(new User({ name, address, lat: parseFloat(lat), lng: parseFloat(lng), sub }))
       setDbUser(user)
     } catch (error) {
-      Alert.alert('error', error.message)
+      Alert.alert('error create user', error.message)
+    }
+  }
+
+  const updateUser = async () => {
+    try {
+      const user = await DataStore.save(
+        User.copyOf(dbUser, updated => {
+          //DataStore objects are immutable so we have to make a copyOf an existing one. then we simply update each field 
+          //according to the 4 fields we have in useState
+          updated.name = name
+          updated.address = address
+          updated.lat = parseFloat(lat)
+          updated.lng = parseFloat(lng)
+        })
+      )
+      
+      //update our context
+      setDbUser(user)
+    } catch (error) {
+      Alert.alert('error update user', error.message)
     }
   }
 
@@ -49,6 +81,8 @@ const Profile = () => {
         onChangeText={setLng}
         placeholder="Longitude"
         style={styles.input}
+        keyboardType="numeric"
+
       />
       <Button onPress={onSave} title="Save" />
       <Text

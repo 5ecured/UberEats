@@ -7,6 +7,7 @@ import styles from './styles'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { DataStore } from 'aws-amplify'
 import { Restaurant, Dish } from '../../models'
+import { useBasketContext } from '../../context/BasketContext'
 
 
 const RestaurantDetailsScreen = () => {
@@ -17,10 +18,13 @@ const RestaurantDetailsScreen = () => {
     const route = useRoute()
     const id = route.params?.id
 
+    const { setRestaurant: setBasketRestaurant } = useBasketContext()
+
     useEffect(() => {
         if (!id) {
             return
         }
+        setBasketRestaurant(null)
 
         // The id below means to query a single Restaurant based on the id we receive above from useRoute
         DataStore.query(Restaurant, id).then(setRestaurant)
@@ -29,6 +33,10 @@ const RestaurantDetailsScreen = () => {
         // 'eq' is equal. so a dish with a restID that is equal to the id from useRoute
         DataStore.query(Dish, dish => dish.restaurantID.eq(id)).then(setDishes)
     }, [id])
+
+    useEffect(() => {
+        setBasketRestaurant(restaurant)
+    }, [restaurant])
 
     if (!restaurant) {
         return (
